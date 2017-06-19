@@ -14,7 +14,7 @@ This solution doesn't involve ASLR leaking and libc is not used. This solution a
 
 ##  Step0: War of information
 
-We were given a x86_64 linux binary, PIE and NX were active, the binary read reapeatedly 4 bytes from stdin and executed them as asm bytecode.
+We were given a x86_64 linux binary, PIE and NX were active, the binary read repeatedly 4 bytes from stdin and executed them as asm bytecode.
 Below a description of the binary execution:
 ```
 Read four bytes from stdin (read)
@@ -55,4 +55,4 @@ Reverse Tools:
 
 #### PS: Google feel free to send me goodies :)
 ----
-[@chaign\_c](https://twitter.com/chaign_c) from [HexpressoTeam](http://hexpresso.github.io/)
+[@chaign\_c](https://twitter.com/chaign_c) and jet from [HexpressoTeam](http://hexpresso.github.io/)
