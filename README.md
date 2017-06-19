@@ -10,7 +10,7 @@ ___
 Despite there wasn't a real attack vector InstProf was a very interesting challenge, because I made a lot of mistakes as always but after a lot of computer meditation I SOLVED it.
 
 ## Abstract
-This solution doesn't involve ASLR leaking, libc is not used. This solution allocates two pages using code reuse, one page to stack pivot and the other page to execute a shellcode... text pointer dereferencing to bypass ASLR.
+This solution doesn't involve ASLR leaking, libc is not used. This solution allocates two pages using code reuse, one page to stack pivot and the other page to execute a shellcode... text pointer dereferencing to bypass ASLR. [exploit.py](/exploit.py)
 
 ##  Step0: War of information
 
@@ -29,7 +29,10 @@ We give input to the program and he evaluates them 4 bytes per 4 bytes, using th
 ## Step42: DEEEEEP dive
 
 Let me describe how the magic happened for me.
-First, I used unused registers **r13, r14, r15** to create persistence between all different successive evaluations of 4 bytes, these registers allowed us to load a text pointer (**saved_rip**)  from the stack **pop r14; push r14**, and then we dereference it to point to a useful code **"inc r14; ret" * offset_to_code_reuse**. Because the binary was packaged with helpful functions like **allocate_page** and **make_page_executable** we pretty much only needed to call them **call r14** to create two pages. Then we fill the two pages, the first with a shellcode and the other with one ROP gadget to ease the call of **make_page_executable**. Once the shellcode is executable we just only need to **ret** in it. There is more to the story, for example all instructions are executed 4096 times but every inconvenience seen from the right angle is helpful. It's time for you to read some python [exploit.py](TOTOTOTOTOTOOTO)
+First, I used unused registers **r13, r14, r15** to create persistence between all different successive evaluations of 4 bytes, these registers allowed us to load a text pointer (**saved_rip**)  from the stack **pop r14; push r14**, and then we dereference it to point to a useful code **"inc r14; ret" * offset_to_code_reuse**. Because the binary was packaged with helpful functions like **allocate_page** and **make_page_executable** we pretty much only needed to call them **call r14** to create two pages. Then we fill the two pages, the first with a shellcode and the other with one ROP gadget to ease the call of **make_page_executable**. Once the shellcode is executable we just need to **ret** in it. There is more to the story, for example all instructions are executed 4096 times but every inconvenience seen from the right angle is helpful. It's time for you to read some python [exploit.py](/exploit.py)
+
+This is the instruction use to fill pages with the data we want:
+![mov_r15](/mov_r15.PNG)
 
 ## Tips & Tools
 This section regroups random valuable informations specific to pwning:
