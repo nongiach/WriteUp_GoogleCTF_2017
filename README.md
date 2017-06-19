@@ -10,7 +10,7 @@ ___
 Despite there wasn't a real attack vector InstProf was a very interesting challenge, because I made a lot of mistakes as always but after a lot of computer meditation I SOLVED it.
 
 ## Abstract
-This solution doesn't involve ASLR leaking, libc is not used. This solution allocates two pages using code reuse, one page to stack pivot and the other page to execute a shellcode... text pointer dereferencing to bypass ASLR. [exploit.py](/exploit.py)
+This solution doesn't involve ASLR leaking and libc is not used. This solution allocates two pages using code reuse, one page to stack pivot and the other page to execute a shellcode... text pointer dereferencing to bypass ASLR. [exploit.py](/exploit.py)
 
 ##  Step0: War of information
 
@@ -37,11 +37,11 @@ This is the instruction use to fill pages with the data we want:
 ## Tips & Tools
 This section regroups random valuable informations specific to pwning:
 
-NX: a page can't be executable and writable at the same time
-ALSR: some sections of the binary are randomized
-PIE: all sections of the binary are randomized
-stack pivot: create a fake stack frame to ease ROP chaining
-pointer dereferencing: use of registers to resolve runtime offset
+- NX: a page can't be executable and writable at the same time
+- ALSR: some sections of the binary are randomized
+- PIE: all sections of the binary are randomized
+- stack pivot: create a fake stack frame to ease ROP chaining
+- pointer dereferencing: use of registers to resolve runtime offset
 
 Reverse Tools:
 - GDB: main tool of a linux reverser
